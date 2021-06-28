@@ -1,5 +1,5 @@
-JAVAC=javac -g
-OBJ=Percolation.class PercolationStats.class PercolationVisualizer.class
+JAVAC=javac
+OBJ=TestAlgs4.class
 
 %.class: %.java
 	$(JAVAC) $<
