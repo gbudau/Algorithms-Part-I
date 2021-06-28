@@ -4,13 +4,11 @@ import edu.princeton.cs.algs4.StdStats;
 public class PercolationStats {
     private static final double CONFIDENCE_95 = 1.960;
     private final double[] percolationThreshold;
-    private final int trials;
     private final double zScore;
 
     // perform independent trials on an n-by-n grid
     public PercolationStats(int n, int trials)
     {
-        this.trials = trials;
         final int gridSize = n * n;
         percolationThreshold = new double[trials];
         for (int i = 0; i < trials; ++i)
