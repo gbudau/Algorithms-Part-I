@@ -116,8 +116,8 @@ public class Percolation {
         --row;
         --col;
         ++openSites;
-        grid[gridSize * row + col] = true;
         int currentPosition = gridSize * row + col;
+        grid[currentPosition] = true;
         connectUpperNeighbour(currentPosition, row, col);
         connectLowerNeighbour(currentPosition, row, col);
         connectLeftNeighbour(currentPosition, row, col);
@@ -138,9 +138,16 @@ public class Percolation {
     }
 
     // is the site (row, col) full?
+    // meaning: is the water coming from the top connected to this site
+    // basically if it "percolates" at this position
     public boolean isFull(int row, int col)
     {
-        return isOpen(row, col);
+        checkValidIndex(row, col);
+        // The row and col indexes start from 1 so we need to substract one
+        --row;
+        --col;
+        int currentPosition = gridSize * row + col;
+        return uf.find(currentPosition) == uf.find(virtualTop);
     }
 
     // returns the number of open sites
