@@ -1,6 +1,8 @@
 # Created by https://www.toptal.com/developers/gitignore/api/java,vim
 # Edit at https://www.toptal.com/developers/gitignore?templates=java,vim
 
+queues/_3293220668bef735d367a188452c32dc_13StacksAndQueues.pdf
+
 ### Java ###
 # Compiled class file
 *.class

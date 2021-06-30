@@ -38,7 +38,8 @@ public class Deque<Item> implements Iterable<Item> {
     {
         if (item == null)
         {
-            throw new IllegalArgumentException("Error: Deque.addFirst(): Invalid argument: null");
+            throw new IllegalArgumentException(
+                    "Error: Deque.addFirst(): Invalid argument: null");
         }
         Node newFront = new Node();
         newFront.item = item;
@@ -54,7 +55,8 @@ public class Deque<Item> implements Iterable<Item> {
     {
         if (item == null)
         {
-            throw new IllegalArgumentException("Error: Deque.addLast(): Invalid argument: null");
+            throw new IllegalArgumentException(
+                    "Error: Deque.addLast(): Invalid argument: null");
         }
         Node newBack = new Node();
         newBack.item = item;
@@ -70,7 +72,8 @@ public class Deque<Item> implements Iterable<Item> {
     {
         if (isEmpty())
         {
-            throw new java.util.NoSuchElementException("Error: Deque.removeFirst(): No such element");
+            throw new java.util.NoSuchElementException(
+                    "Error: Deque.removeFirst(): No such element");
         }
         Node oldFirst = dummy.next;
         dummy.next.next.prev = dummy;
@@ -84,7 +87,8 @@ public class Deque<Item> implements Iterable<Item> {
     {
         if (isEmpty())
         {
-            throw new java.util.NoSuchElementException("Error: Deque.removeLast(): No such element");
+            throw new java.util.NoSuchElementException(
+                    "Error: Deque.removeLast(): No such element");
         }
         Node oldLast = dummy.prev;
         dummy.prev.prev.next = dummy;
@@ -110,14 +114,16 @@ public class Deque<Item> implements Iterable<Item> {
 
         public void remove()
         {
-            throw new UnsupportedOperationException("Unsupported operation remove()");
+            throw new UnsupportedOperationException(
+                    "Error: Deque.iterator.remove(): Unsupported operation");
         }
 
         public Item next()
         {
             if (current == dummy)
             {
-                throw new java.util.NoSuchElementException("Error: Deque.next(): No such element");
+                throw new java.util.NoSuchElementException(
+                        "Error: Deque.iterator.next(): No such element");
             }
             Item item = current.item;
             current = current.next;
@@ -141,7 +147,9 @@ public class Deque<Item> implements Iterable<Item> {
         System.out.println("Printing the deque using iterators");
         for (int i : dq)
             System.out.println(i);
-        System.out.println("Removing the last item in the deque: " + dq.removeLast());
-        System.out.println("Removing the first item in the deque: " + dq.removeFirst());
+        System.out.println("Removing the last item in the deque: "
+                + dq.removeLast());
+        System.out.println("Removing the first item in the deque: "
+                + dq.removeFirst());
     }
 }
