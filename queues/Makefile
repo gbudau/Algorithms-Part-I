@@ -1,5 +1,5 @@
 JAVAC=javac
-OBJ=Deque.class RandomizedQueue.class
+OBJ=Deque.class RandomizedQueue.class Permutation.class
 
 %.class: %.java
 	$(JAVAC) $<
