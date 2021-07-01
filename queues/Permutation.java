@@ -12,26 +12,34 @@ public class Permutation
         }
         int k = Integer.parseInt(args[0]);
         RandomizedQueue<String> rq = new RandomizedQueue<String>();
-        String s;
         int i = 0;
+        int j;
+        String s;
         while (!StdIn.isEmpty())
         {
             s = StdIn.readString();
+            if (k == 0)
+            {
+                continue;
+            }
             if (i < k)
             {
                 rq.enqueue(s);
             }
-            else if (!rq.isEmpty() && StdRandom.bernoulli(1.0 / (i + 1)))
+            else
             {
-                rq.dequeue();
-                rq.enqueue(s);
+                j = StdRandom.uniform(i + 1);
+                if (j < k)
+                {
+                    rq.dequeue();
+                    rq.enqueue(s);
+                }
             }
             i++;
         }
-        while (!rq.isEmpty())
+        for (String str : rq)
         {
-            s = rq.dequeue();
-            System.out.println(s);
+            System.out.println(str);
         }
     }
 }
