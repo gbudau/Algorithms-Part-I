@@ -38,17 +38,7 @@ public class RandomizedQueue<Item> implements Iterable<Item>
         {
             resize(isEmpty() ? 1 : 2 * data.length);
         }
-        if (isEmpty())
-        {
-            data[size++] = item;
-        }
-        else
-        {
-            final int randomIndex = StdRandom.uniform(size);
-            Item temp = data[randomIndex];
-            data[randomIndex] = item;
-            data[size++] = temp;
-        }
+        data[size++] = item;
     }
 
     // resize the randomized queue
@@ -105,20 +95,20 @@ public class RandomizedQueue<Item> implements Iterable<Item>
 
     private class RandomizedQueueIterator implements Iterator<Item>
     {
-        private final int start;
         private int index;
-        private int n;
 
         RandomizedQueueIterator()
         {
-            start = size != 0 ? StdRandom.uniform(size) : 0;
-            index = start;
-            n = 0;
+            index = size;
+            if (size > 1)
+            {
+                StdRandom.shuffle(data, 0, size);
+            }
         }
 
         public boolean hasNext()
         {
-            return n < size;
+            return index > 0;
         }
 
         public void remove()
@@ -134,10 +124,7 @@ public class RandomizedQueue<Item> implements Iterable<Item>
                 throw new java.util.NoSuchElementException(
                         "Error: RandomizedQueue.iterator.next()");
             }
-            Item item = data[index];
-            index = (index + 1) % size;
-            ++n;
-            return item;
+            return data[--index];
         }
     }
 
