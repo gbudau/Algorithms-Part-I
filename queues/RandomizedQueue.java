@@ -73,6 +73,10 @@ public class RandomizedQueue<Item> implements Iterable<Item>
         final int randomIndex = StdRandom.uniform(size);
         Item item = data[randomIndex];
         data[randomIndex] = data[--size];
+        // does this two lines are needed here?
+        // need to learn more about java loitering and reference
+        data[size] = item;
+        item = data[size];
         data[size] = null;
         if (!isEmpty() && size == data.length / 4)
         {
@@ -89,7 +93,7 @@ public class RandomizedQueue<Item> implements Iterable<Item>
             throw new java.util.NoSuchElementException(
                     "Error: RandomizedQueue.sample(): no such element");
         }
-        final int index = StdRandom.uniform(size - 1);
+        final int index = StdRandom.uniform(size);
         return data[index];
     }
 
@@ -101,25 +105,20 @@ public class RandomizedQueue<Item> implements Iterable<Item>
 
     private class RandomizedQueueIterator implements Iterator<Item>
     {
-        final private int start;
+        private final int start;
         private int index;
+        private int n;
 
         RandomizedQueueIterator()
         {
-            start = StdRandom.uniform(size);
+            start = size != 0 ? StdRandom.uniform(size) : 0;
             index = start;
+            n = 0;
         }
 
         public boolean hasNext()
         {
-            if (isEmpty())
-            {
-                return false;
-            }
-            else
-            {
-                return (index + 1) % size != start;
-            }
+            return n < size;
         }
 
         public void remove()
@@ -135,8 +134,10 @@ public class RandomizedQueue<Item> implements Iterable<Item>
                 throw new java.util.NoSuchElementException(
                         "Error: RandomizedQueue.iterator.next()");
             }
+            Item item = data[index];
             index = (index + 1) % size;
-            return data[index];
+            ++n;
+            return item;
         }
     }
 
@@ -146,12 +147,12 @@ public class RandomizedQueue<Item> implements Iterable<Item>
         RandomizedQueue<Integer> rq = new RandomizedQueue<Integer>();
         System.out.println("RandomizedQueue is empty?: " + rq.isEmpty());
         System.out.println("RandomizedQueue size: " + rq.size());
-        System.out.println("Adding 2 to the RandomizedQueue");
-        rq.enqueue(2);
-        System.out.println("RandomizedQueue is empty?: " + rq.isEmpty());
-        System.out.println("RandomizedQueue size: " + rq.size());
         System.out.println("Adding 1 to the RandomizedQueue");
         rq.enqueue(1);
+        System.out.println("RandomizedQueue is empty?: " + rq.isEmpty());
+        System.out.println("RandomizedQueue size: " + rq.size());
+        System.out.println("Adding 0 to the RandomizedQueue");
+        rq.enqueue(0);
         System.out.println("RandomizedQueue size: " + rq.size());
         System.out.println("Adding 10 random integers to the RandomizedQueue");
         for (int i = 0; i < 10; ++i)
@@ -178,6 +179,15 @@ public class RandomizedQueue<Item> implements Iterable<Item>
             System.out.println("Removing one item from the RandomizedQueue: "
                     + rq.dequeue());
         }
-
+        System.out.println("Creating a RandomizedQueue of doubles");
+        RandomizedQueue<Double> rqd = new RandomizedQueue<Double>();
+        rqd.enqueue(0.0);
+        rqd.enqueue(0.1);
+        rqd.enqueue(0.0);
+        System.out.println("Printing the RandomizedQueue of doubles using iterators");
+        for (double d : rq)
+        {
+            System.out.println(d);
+        }
     }
 }

@@ -1,4 +1,5 @@
 import edu.princeton.cs.algs4.StdIn;
+import edu.princeton.cs.algs4.StdRandom;
 
 public class Permutation
 {
@@ -10,23 +11,27 @@ public class Permutation
             return;
         }
         int k = Integer.parseInt(args[0]);
-        if (k <= 0)
-        {
-            System.out.println("Error: k must be a positive number");
-            return;
-        }
         RandomizedQueue<String> rq = new RandomizedQueue<String>();
         String s;
+        int i = 0;
         while (!StdIn.isEmpty())
         {
             s = StdIn.readString();
-            rq.enqueue(s);
+            if (i < k)
+            {
+                rq.enqueue(s);
+            }
+            else if (!rq.isEmpty() && StdRandom.bernoulli(1.0 / (i + 1)))
+            {
+                rq.dequeue();
+                rq.enqueue(s);
+            }
+            i++;
         }
-        while (!rq.isEmpty() && k != 0)
+        while (!rq.isEmpty())
         {
             s = rq.dequeue();
             System.out.println(s);
-            k--;
         }
     }
 }
