@@ -22,10 +22,11 @@ public class Permutation
             s = StdIn.readString();
             rq.enqueue(s);
         }
-        while (!rq.isEmpty() && k-- != 0)
+        while (!rq.isEmpty() && k != 0)
         {
             s = rq.dequeue();
             System.out.println(s);
+            k--;
         }
     }
 }

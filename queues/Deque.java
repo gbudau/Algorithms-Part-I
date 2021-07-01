@@ -2,7 +2,7 @@ import java.util.Iterator;
 
 public class Deque<Item> implements Iterable<Item> {
 
-    private Node dummy;
+    final private Node dummy;
     private int dequeSize = 0;
 
     private class Node
