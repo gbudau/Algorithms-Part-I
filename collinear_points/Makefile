@@ -1,4 +1,4 @@
-JAVAC=javac
+JAVAC=javac -g
 OBJ=Point.class LineSegment.class BruteCollinearPoints.class FastCollinearPoints.class
 
 %.class: %.java

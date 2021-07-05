@@ -1,6 +1,7 @@
 import edu.princeton.cs.algs4.StdDraw;
 import edu.princeton.cs.algs4.In;
 import java.util.Arrays;
+import java.util.Comparator;
 
 public class FastCollinearPoints {
 	private int nSegments;
@@ -24,73 +25,61 @@ public class FastCollinearPoints {
 		{
 			Point[] copy = create_copy(points);
 			Arrays.sort(copy, points[i].slopeOrder());
-			int pointIndex = binarySearch(copy, points[i]);
-
-			System.out.println("Point at current index: " + points[i].toString());
-			System.out.println("Point found by binary search " + points[pointIndex].toString());
-			System.out.println("i index: " + i + ", point index: " + pointIndex);
-			System.out.println();
-
-			int minIndex = findMinIndex(copy, pointIndex);
-			int maxIndex = findMaxIndex(copy, pointIndex);
-			if (minIndex != -1 && maxIndex != -1 &&
-					(maxIndex - minIndex) > 3 &&
-					points[i].compareTo(points[minIndex]) == 0)
+			int pointIndex = searchPoint(copy, points[i]);
+			if (pointIndex == -1)
 			{
-				LineSegment ls = new LineSegment(
-						points[minIndex], points[maxIndex]);
+				continue;
+			}
+			int minIndex = pointIndex;
+			int maxIndex = findMaxIndex(copy, pointIndex, points[i]);
+			--minIndex;
+			Point temp = copy[minIndex];
+			copy[minIndex] = copy[0];
+			copy[0] = temp;
+			// TODO
+			// Check if that LineSegment has not been added already
+			// Add the LineSegment
+			Arrays.sort(copy, minIndex, maxIndex + 1);
+			Point minPoint = copy[minIndex];
+			Point maxPoint = copy[maxIndex];
+			for (int j = 0; j < copy.length; ++j)
+			{
+				System.out.print(points[i].slopeTo(copy[j]) + " ");
+			}
+			System.out.println();
+			System.out.println("minIndex: " + minIndex + ", maxIndex: " + maxIndex);
+			System.out.println();
+			if ((maxIndex - minIndex) > 2)
+			{
+				LineSegment ls = new LineSegment(minPoint, maxPoint);
 				addLineSegment(ls);
 			}
 		}
 	}
 
-	private static int binarySearch(Point[] points, Point p)
+	private static int searchPoint(Point[] points, Point p)
 	{
-		int lo = 0;
-		int hi = points.length - 1;
-		while (lo <= hi)
+		for (int i = 0; i < points.length - 1; ++i)
 		{
-			int mid = lo + (hi - lo) / 2;
-			if (p.compareTo(points[mid]) < 0)
+			if (p.slopeTo(points[i]) == p.slopeTo(points[i + 1]))
 			{
-				hi = mid - 1;
-			}
-			else if (p.compareTo(points[mid]) > 0)
-			{
-				lo = mid + 1;
-			}
-			else
-			{
-				return mid;
+				return i;
 			}
 		}
 		return -1;
 	}
 
-	private static int findMinIndex(Point[] points, int pointIndex)
-	{
-		int minIndex = pointIndex;
-		for (; minIndex >= 0; --minIndex)
-		{
-			if (points[pointIndex].compareTo(points[minIndex]) != 0)
-			{
-				break;
-			}
-		}
-		return minIndex;
-	}
-
-	private static int findMaxIndex(Point[] points, int pointIndex)
+	private static int findMaxIndex(Point[] points, int pointIndex, Point p)
 	{
 		int maxIndex = pointIndex;
 		for (; maxIndex < points.length; ++maxIndex)
 		{
-			if (points[pointIndex].compareTo(points[maxIndex]) != 0)
+			if (p.slopeTo(points[maxIndex]) != p.slopeTo(points[pointIndex]))
 			{
 				break;
 			}
 		}
-		return maxIndex;
+		return maxIndex - 1;
 	}
 
 	private static Point[] create_copy(Point[] points)
