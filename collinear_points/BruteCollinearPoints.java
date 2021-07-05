@@ -9,12 +9,12 @@ public class BruteCollinearPoints {
     // finds all line segments containing 4 points
     public BruteCollinearPoints(Point[] pointsArray)
     {
-        Point[] points = createPointsCopy(pointsArray);
-        if (points == null || isAnyPointNull(points))
+        if (pointsArray == null || isAnyPointNull(pointsArray))
         {
             throw new IllegalArgumentException(
                     "Error: BruteCollinearPoints: Invalid argument: null");
         }
+        Point[] points = createPointsCopy(pointsArray);
         Arrays.sort(points);
         if (isAnyPointDuplicate(points))
         {
@@ -37,8 +37,7 @@ public class BruteCollinearPoints {
                         Point s = points[h];
                         Point minPoint = findMinPoint(p, q, r, s);
                         if (p.slopeTo(q) == p.slopeTo(r) &&
-                                p.slopeTo(r) == p.slopeTo(s) &&
-                                p.compareTo(minPoint) == 0)
+                                p.slopeTo(r) == p.slopeTo(s))
                         {
                             LineSegment ls = new LineSegment(p, s);
                             addLineSegment(ls);
@@ -47,23 +46,6 @@ public class BruteCollinearPoints {
                 }
             }
         }
-    }
-
-    private static Point findMinPoint(Point p, Point q, Point r, Point s)
-    {
-        if (p.compareTo(q) < 0 && p.compareTo(q) < 0 && p.compareTo(s) < 0)
-        {
-            return p;
-        }
-        if (q.compareTo(p) < 0 && q.compareTo(r) < 0 && p.compareTo(s) < 0)
-        {
-            return q;
-        }
-        if (r.compareTo(p) < 0 && r.compareTo(q) < 0 && r.compareTo(s) < 0)
-        {
-            return r;
-        }
-        return s;
     }
 
     private static Point[] createPointsCopy(Point[] points)

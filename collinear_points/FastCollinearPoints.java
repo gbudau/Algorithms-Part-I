@@ -1,7 +1,6 @@
 import edu.princeton.cs.algs4.StdDraw;
 import edu.princeton.cs.algs4.In;
 import java.util.Arrays;
-import java.util.Comparator;
 
 public class FastCollinearPoints {
     private int nSegments;
@@ -10,12 +9,12 @@ public class FastCollinearPoints {
     // finds all line segments containing 4 or more points
     public FastCollinearPoints(Point[] pointsArray)
     {
-        Point[] points = createPointsCopy(pointsArray);
-        if (points == null || isAnyPointNull(points))
+        if (pointsArray == null || isAnyPointNull(pointsArray))
         {
             throw new IllegalArgumentException(
                     "Error: FastCollinearPoints: Invalid argument: null");
         }
+        Point[] points = createPointsCopy(pointsArray);
         Arrays.sort(points);
         if (isAnyPointDuplicate(points))
         {
@@ -30,8 +29,7 @@ public class FastCollinearPoints {
         }
     }
 
-    // Find max LineSegment of 4+ points and return it, else return null
-    private LineSegment findLineSegments(Point[] points, Point p)
+    private void findLineSegments(Point[] points, Point p)
     {
         LineSegment ls = null;
         for (int i = 0; i < points.length - 1; ++i)
@@ -56,7 +54,6 @@ public class FastCollinearPoints {
                 i += (maxIndex - i);
             }
         }
-        return ls;
     }
 
     private static int findMaxIndex(Point[] points, int pointIndex, Point p)
