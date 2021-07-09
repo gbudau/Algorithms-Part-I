@@ -35,7 +35,6 @@ public class BruteCollinearPoints {
                         Point q = points[j];
                         Point r = points[k]; 
                         Point s = points[h];
-                        Point minPoint = findMinPoint(p, q, r, s);
                         if (p.slopeTo(q) == p.slopeTo(r) &&
                                 p.slopeTo(r) == p.slopeTo(s))
                         {
