@@ -22,19 +22,25 @@ public class Board {
             throw new IllegalArgumentException(
                     "Error: Board: Invalid board size");
         }
-        this.tiles = new int[N][N];
-        for (int row = 0; row < N; ++row)
+        this.tiles = copyTiles(tiles);
+    }
+
+    private int[][] copyTiles(int[][] tilesArray)
+    {
+        int n = tilesArray.length;
+        int[][] copy = new int[n][n];
+        for (int row = 0; row < n; ++row)
         {
-            if (tiles.length != N)
+            if (tilesArray[row].length != n)
             {
-                throw new IllegalArgumentException(
-                        "Error: Board: Invalid board size");
+                throw new IllegalArgumentException("Error: Invalid array size");
             }
-            for (int col = 0; col < N; ++col)
+            for (int col = 0; col < n; ++col)
             {
-                this.tiles[row][col] = tiles[row][col];
+                copy[row][col] = tilesArray[row][col];
             }
         }
+        return copy;
     }
 
     // string representation of this board
@@ -140,22 +146,118 @@ public class Board {
         return N == that.N && Arrays.deepEquals(tiles, that.tiles);
     }
 
+    private int[][] cloneBoard() {
+        int[][] clone = new int[N][N];
+        for (int row = 0; row < N; ++row)
+        {
+            for (int col = 0; col < N; ++col)
+            {
+                clone[row][col] = tiles[row][col];
+            }
+        }
+        return clone;
+
+    }
+
+    private Board slideTopNeighbor(int emptyTileRow, int emptyTileCol)
+    {
+        if (emptyTileRow == 0)
+        {
+            return null;
+        }
+        int[][] topNeighbor = cloneBoard();
+        topNeighbor[emptyTileRow][emptyTileCol] = topNeighbor[emptyTileRow - 1][emptyTileCol];
+        topNeighbor[emptyTileRow - 1][emptyTileCol] = 0;
+        return new Board(topNeighbor);
+    }
+
+    private Board slideRightNeighbor(int emptyTileRow, int emptyTileCol)
+    {
+        if (emptyTileCol == N - 1)
+        {
+            return null;
+        }
+        int[][] rightNeighbor = cloneBoard();
+        rightNeighbor[emptyTileRow][emptyTileCol] = rightNeighbor[emptyTileRow][emptyTileCol + 1];
+        rightNeighbor[emptyTileRow][emptyTileCol + 1] = 0;
+        return new Board(rightNeighbor);
+    }
+
+    private Board slideBottomNeighbor(int emptyTileRow, int emptyTileCol)
+    {
+        if (emptyTileRow == N - 1)
+        {
+            return null;
+        }
+        int[][] bottomNeighbor = cloneBoard();
+        bottomNeighbor[emptyTileRow][emptyTileCol] = bottomNeighbor[emptyTileRow + 1][emptyTileCol];
+        bottomNeighbor[emptyTileRow + 1][emptyTileCol] = 0;
+        return new Board(bottomNeighbor);
+    }
+
+    private Board slideLeftNeighbor(int emptyTileRow, int emptyTileCol)
+    {
+        if (emptyTileCol == 0)
+        {
+            return null;
+        }
+        int[][] leftNeighbor = cloneBoard();
+        leftNeighbor[emptyTileRow][emptyTileCol] = leftNeighbor[emptyTileRow][emptyTileCol - 1];
+        leftNeighbor[emptyTileRow][emptyTileCol - 1] = 0;
+        return new Board(leftNeighbor);
+    }
+
     // all neighboring boards
     public Iterable<Board> neighbors()
     {
-        // Stack nb;
-        return null;
+        Stack<Board> nb = new Stack<Board>();
+        int emptyTileRow = -1;
+        int emptyTileCol = -1;
+        int emptyTile = 0;
+        int[][] currentBoardCopy = cloneBoard();
+        for (int row = 0; row < N; ++row)
+        {
+            for (int col = 0; col < N; ++col)
+            {
+                if (tiles[row][col] == emptyTile)
+                {
+                    emptyTileRow = row;
+                    emptyTileCol = col;
+                }
+            }
+        }
+        Board topNeighbor = slideTopNeighbor(emptyTileRow, emptyTileCol);
+        if (topNeighbor != null)
+        {
+            nb.push(topNeighbor);
+        }
+        Board rightNeighbor = slideRightNeighbor(emptyTileRow, emptyTileCol);
+        if (rightNeighbor != null)
+        {
+            nb.push(rightNeighbor);
+        }
+        Board bottomNeighbor = slideBottomNeighbor(emptyTileRow, emptyTileCol);
+        if (bottomNeighbor != null)
+        {
+            nb.push(bottomNeighbor);
+        }
+        Board leftNeighbor = slideLeftNeighbor(emptyTileRow, emptyTileCol);
+        if (leftNeighbor != null)
+        {
+            nb.push(leftNeighbor);
+        }
+        return nb;
     }
 
     // a board that is obtained by exchanging any pair of tiles
     public Board twin()
     {
-        int[][] twin_tiles = new int[N][N];
+        int[][] twinTiles = new int[N][N];
         for (int row = 0; row < N; ++row)
         {
             for (int col = 0; col < N; ++col)
             {
-                twin_tiles[row][col] = tiles[row][col];
+                twinTiles[row][col] = tiles[row][col];
             }
         }
         int firstPairRow = -1;
@@ -166,24 +268,24 @@ public class Board {
         {
             for (int col = 0; col < N; ++col)
             {
-                if (twin_tiles[row][col] != 0
+                if (twinTiles[row][col] != 0
                         && firstPairRow == -1
                         && firstPairCol == -1)
                 {
                     firstPairRow = row;
                     firstPairCol = col;
                 }
-                else if (twin_tiles[row][col] != 0
+                else if (twinTiles[row][col] != 0
                         && secondPairRow == -1
                         && secondPairCol == -1)
                 {
                     secondPairRow = row;
                     secondPairCol = col;
-                    int temp = twin_tiles[firstPairRow][firstPairCol];
-                    twin_tiles[firstPairRow][firstPairCol] =
-                        twin_tiles[secondPairRow][secondPairCol];
-                    twin_tiles[secondPairRow][secondPairCol] = temp;
-                    return new Board(twin_tiles);
+                    int temp = twinTiles[firstPairRow][firstPairCol];
+                    twinTiles[firstPairRow][firstPairCol] =
+                        twinTiles[secondPairRow][secondPairCol];
+                    twinTiles[secondPairRow][secondPairCol] = temp;
+                    return new Board(twinTiles);
                 }
             }
         }
@@ -205,10 +307,17 @@ public class Board {
             }
         }
         Board initial = new Board(tiles);
+        System.out.println("Current board:");
         System.out.println(initial.toString());
         System.out.println("Is goal board?: " + initial.isGoal());
         System.out.println("Hamming distance: " + initial.hamming());
         System.out.println("Manhattan distance: " + initial.manhattan());
-        System.out.println("Twin tile" + initial.twin().toString());
+        System.out.println("Twin tile:");
+        System.out.println(initial.twin().toString());
+        System.out.println("Board neighbors:");
+        Iterable<Board> neighbors = initial.neighbors();
+        for (Board nb : neighbors) {
+            System.out.println(nb.toString());
+        }
     }
 }
