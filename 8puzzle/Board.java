@@ -1,5 +1,6 @@
 import java.util.Arrays;
 import edu.princeton.cs.algs4.In;
+import edu.princeton.cs.algs4.Stack;
 
 public class Board {
     private final int N;          // number of rows/columns
@@ -62,7 +63,27 @@ public class Board {
     // is this board the goal board?
     public boolean isGoal()
     {
-        // TODO
+        int tile = 1;
+        int lastRow = N - 1;
+        int lastCol = N - 1;
+        int emptyTile = 0;
+        for (int row = 0; row < N; ++row) {
+            for (int col = 0; col < N; ++col)
+            {
+                if (row == lastRow && col == lastCol)
+                {
+                    if (tiles[row][col] != emptyTile)
+                    {
+                        return false;
+                    }
+                }
+                else if (tiles[row][col] != tile)
+                {
+                    return false;
+                }
+                ++tile;
+            }
+        }
         return true;
     }
 
@@ -88,7 +109,7 @@ public class Board {
     // all neighboring boards
     public Iterable<Board> neighbors()
     {
-        // TODO
+        // Stack nb;
         return null;
     }
 
@@ -115,5 +136,6 @@ public class Board {
         }
         Board initial = new Board(tiles);
         System.out.println(initial.toString());
+        System.out.println(initial.isGoal());
     }
 }
