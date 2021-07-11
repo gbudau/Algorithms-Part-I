@@ -1,6 +1,7 @@
 import java.util.Arrays;
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.Stack;
+import java.lang.Math;
 
 public class Board {
     private final int N;          // number of rows/columns
@@ -58,9 +59,9 @@ public class Board {
     {
         int sum = 0;
         int tile = 1;
-        int lastRow = N - 1;
-        int lastCol = N - 1;
-        int emptyTile = 0;
+        final int lastRow = N - 1;
+        final int lastCol = N - 1;
+        final int emptyTile = 0;
         for (int row = 0; row < N; ++row) {
             for (int col = 0; col < N; ++col)
             {
@@ -84,14 +85,33 @@ public class Board {
     // sum of Manhattan distances between tiles and goal
     public int manhattan()
     {
-        // TODO
-        return 0;
+        int sum = 0;
+        int tile = 1;
+        final int lastRow = N - 1;
+        final int lastCol = N - 1;
+        final int emptyTile = 0;
+        for (int row = 0; row < N; ++row) {
+            for (int col = 0; col < N; ++col)
+            {
+                final int currentTile = tiles[row][col];
+                final int goalRow = (currentTile - 1) / N;
+                final int goalCol = (currentTile - 1) % N;
+                if (currentTile != tile &&
+                        currentTile != emptyTile)
+                {
+                    sum += Math.abs(col - goalCol);
+                    sum += Math.abs(row - goalRow);
+                }
+                ++tile;
+            }
+        }
+        return sum;
     }
 
     // is this board the goal board?
     public boolean isGoal()
     {
-        if (N != 0)
+        if (N == 0)
         {
             return true;
         }
@@ -152,5 +172,6 @@ public class Board {
         System.out.println(initial.toString());
         System.out.println("Is goal board?: " + initial.isGoal());
         System.out.println("Hamming distance: " + initial.hamming());
+        System.out.println("Manhattan distance: " + initial.manhattan());
     }
 }
