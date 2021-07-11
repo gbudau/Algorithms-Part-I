@@ -17,13 +17,18 @@ public class Board {
                     "Error: Board: Invalid argument: null");
         }
         N = tiles.length;
+        if (N < 2 || N > 127)
+        {
+            throw new IllegalArgumentException(
+                    "Error: Board: Invalid board size");
+        }
         this.tiles = new int[N][N];
         for (int row = 0; row < N; ++row)
         {
             if (tiles.length != N)
             {
                 throw new IllegalArgumentException(
-                        "Error: Board: Invalid array size");
+                        "Error: Board: Invalid board size");
             }
             for (int col = 0; col < N; ++col)
             {
@@ -111,10 +116,6 @@ public class Board {
     // is this board the goal board?
     public boolean isGoal()
     {
-        if (N == 0)
-        {
-            return true;
-        }
         int lastRow = N - 1;
         int lastCol = N - 1;
         int emptyTile = 0;
