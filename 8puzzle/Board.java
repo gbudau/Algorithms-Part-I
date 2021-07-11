@@ -53,6 +53,34 @@ public class Board {
         return N;
     }
 
+    // number of tiles out of place
+    public int hamming()
+    {
+        int sum = 0;
+        int tile = 1;
+        int lastRow = N - 1;
+        int lastCol = N - 1;
+        int emptyTile = 0;
+        for (int row = 0; row < N; ++row) {
+            for (int col = 0; col < N; ++col)
+            {
+                if (tiles[row][col] != tile)
+                {
+                    if (row == lastRow && col == lastCol)
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        ++sum;
+                    }
+                }
+                ++tile;
+            }
+        }
+        return sum;
+    }
+
     // sum of Manhattan distances between tiles and goal
     public int manhattan()
     {
@@ -63,28 +91,14 @@ public class Board {
     // is this board the goal board?
     public boolean isGoal()
     {
-        int tile = 1;
+        if (N != 0)
+        {
+            return true;
+        }
         int lastRow = N - 1;
         int lastCol = N - 1;
         int emptyTile = 0;
-        for (int row = 0; row < N; ++row) {
-            for (int col = 0; col < N; ++col)
-            {
-                if (row == lastRow && col == lastCol)
-                {
-                    if (tiles[row][col] != emptyTile)
-                    {
-                        return false;
-                    }
-                }
-                else if (tiles[row][col] != tile)
-                {
-                    return false;
-                }
-                ++tile;
-            }
-        }
-        return true;
+        return hamming() == 0 && tiles[lastRow][lastCol] == emptyTile;
     }
 
     // does this board equal y?
@@ -136,6 +150,7 @@ public class Board {
         }
         Board initial = new Board(tiles);
         System.out.println(initial.toString());
-        System.out.println(initial.isGoal());
+        System.out.println("Is goal board?: " + initial.isGoal());
+        System.out.println("Hamming distance: " + initial.hamming());
     }
 }
