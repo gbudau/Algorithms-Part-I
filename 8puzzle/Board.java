@@ -66,7 +66,6 @@ public class Board {
         int tile = 1;
         final int lastRow = N - 1;
         final int lastCol = N - 1;
-        final int emptyTile = 0;
         for (int row = 0; row < N; ++row) {
             for (int col = 0; col < N; ++col)
             {
@@ -151,7 +150,43 @@ public class Board {
     // a board that is obtained by exchanging any pair of tiles
     public Board twin()
     {
-        // TODO
+        int[][] twin_tiles = new int[N][N];
+        for (int row = 0; row < N; ++row)
+        {
+            for (int col = 0; col < N; ++col)
+            {
+                twin_tiles[row][col] = tiles[row][col];
+            }
+        }
+        int firstPairRow = -1;
+        int firstPairCol = -1;
+        int secondPairRow = -1;
+        int secondPairCol = -1;
+        for (int row = 0; row < N; ++row)
+        {
+            for (int col = 0; col < N; ++col)
+            {
+                if (twin_tiles[row][col] != 0
+                        && firstPairRow == -1
+                        && firstPairCol == -1)
+                {
+                    firstPairRow = row;
+                    firstPairCol = col;
+                }
+                else if (twin_tiles[row][col] != 0
+                        && secondPairRow == -1
+                        && secondPairCol == -1)
+                {
+                    secondPairRow = row;
+                    secondPairCol = col;
+                    int temp = twin_tiles[firstPairRow][firstPairCol];
+                    twin_tiles[firstPairRow][firstPairCol] =
+                        twin_tiles[secondPairRow][secondPairCol];
+                    twin_tiles[secondPairRow][secondPairCol] = temp;
+                    return new Board(twin_tiles);
+                }
+            }
+        }
         return null;
     }
 
@@ -174,5 +209,6 @@ public class Board {
         System.out.println("Is goal board?: " + initial.isGoal());
         System.out.println("Hamming distance: " + initial.hamming());
         System.out.println("Manhattan distance: " + initial.manhattan());
+        System.out.println("Twin tile" + initial.twin().toString());
     }
 }
