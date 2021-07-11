@@ -1,5 +1,5 @@
 JAVAC=javac
-OBJ=Board.class
+OBJ=Board.class Solver.class
 
 %.class: %.java
 	$(JAVAC) $<
