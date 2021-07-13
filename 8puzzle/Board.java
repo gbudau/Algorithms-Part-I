@@ -1,11 +1,10 @@
 import java.util.Arrays;
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.Stack;
-import java.lang.Math;
 
 public class Board {
-    private final int N;          // number of rows/columns
-    private final int[][] tiles;  // N-by-N array
+    private final int n;          // number of rows/columns
+    private final int[][] tiles;  // n-by-n array
 
     // create a board from an n-by-n array of tiles,
     // where tiles[row][col] = tile at (row, col)
@@ -16,8 +15,8 @@ public class Board {
             throw new IllegalArgumentException(
                     "Error: Board: Invalid argument: null");
         }
-        N = tiles.length;
-        if (N < 2 || N > 127)
+        n = tiles.length;
+        if (n < 2)
         {
             throw new IllegalArgumentException(
                     "Error: Board: Invalid board size");
@@ -27,15 +26,15 @@ public class Board {
 
     private int[][] copyTiles(int[][] tilesArray)
     {
-        int n = tilesArray.length;
-        int[][] copy = new int[n][n];
-        for (int row = 0; row < n; ++row)
+        int length = tilesArray.length;
+        int[][] copy = new int[length][length];
+        for (int row = 0; row < length; ++row)
         {
-            if (tilesArray[row].length != n)
+            if (tilesArray[row].length != length)
             {
                 throw new IllegalArgumentException("Error: Invalid array size");
             }
-            for (int col = 0; col < n; ++col)
+            for (int col = 0; col < length; ++col)
             {
                 copy[row][col] = tilesArray[row][col];
             }
@@ -47,10 +46,10 @@ public class Board {
     public String toString()
     {
         StringBuilder s = new StringBuilder();
-        s.append(N + "\n");
-        for (int row = 0; row < N; ++row)
+        s.append(n + "\n");
+        for (int row = 0; row < n; ++row)
         {
-            for (int col = 0; col < N; ++col)
+            for (int col = 0; col < n; ++col)
             {
                 s.append(String.format("%2d ", tiles[row][col]));
             }
@@ -62,7 +61,7 @@ public class Board {
     // board dimension n
     public int dimension()
     {
-        return N;
+        return n;
     }
 
     // number of tiles out of place
@@ -70,10 +69,10 @@ public class Board {
     {
         int sum = 0;
         int tile = 1;
-        final int lastRow = N - 1;
-        final int lastCol = N - 1;
-        for (int row = 0; row < N; ++row) {
-            for (int col = 0; col < N; ++col)
+        final int lastRow = n - 1;
+        final int lastCol = n - 1;
+        for (int row = 0; row < n; ++row) {
+            for (int col = 0; col < n; ++col)
             {
                 if (tiles[row][col] != tile)
                 {
@@ -97,15 +96,13 @@ public class Board {
     {
         int sum = 0;
         int tile = 1;
-        final int lastRow = N - 1;
-        final int lastCol = N - 1;
         final int emptyTile = 0;
-        for (int row = 0; row < N; ++row) {
-            for (int col = 0; col < N; ++col)
+        for (int row = 0; row < n; ++row) {
+            for (int col = 0; col < n; ++col)
             {
                 final int currentTile = tiles[row][col];
-                final int goalRow = (currentTile - 1) / N;
-                final int goalCol = (currentTile - 1) % N;
+                final int goalRow = (currentTile - 1) / n;
+                final int goalCol = (currentTile - 1) % n;
                 if (currentTile != tile &&
                         currentTile != emptyTile)
                 {
@@ -121,8 +118,8 @@ public class Board {
     // is this board the goal board?
     public boolean isGoal()
     {
-        int lastRow = N - 1;
-        int lastCol = N - 1;
+        int lastRow = n - 1;
+        int lastCol = n - 1;
         int emptyTile = 0;
         return hamming() == 0 && tiles[lastRow][lastCol] == emptyTile;
     }
@@ -143,14 +140,14 @@ public class Board {
             return false;
         }
         Board that = (Board) aThat;
-        return N == that.N && Arrays.deepEquals(tiles, that.tiles);
+        return n == that.n && Arrays.deepEquals(tiles, that.tiles);
     }
 
     private int[][] cloneBoard() {
-        int[][] clone = new int[N][N];
-        for (int row = 0; row < N; ++row)
+        int[][] clone = new int[n][n];
+        for (int row = 0; row < n; ++row)
         {
-            for (int col = 0; col < N; ++col)
+            for (int col = 0; col < n; ++col)
             {
                 clone[row][col] = tiles[row][col];
             }
@@ -173,7 +170,7 @@ public class Board {
 
     private Board slideRightNeighbor(int emptyTileRow, int emptyTileCol)
     {
-        if (emptyTileCol == N - 1)
+        if (emptyTileCol == n - 1)
         {
             return null;
         }
@@ -185,7 +182,7 @@ public class Board {
 
     private Board slideBottomNeighbor(int emptyTileRow, int emptyTileCol)
     {
-        if (emptyTileRow == N - 1)
+        if (emptyTileRow == n - 1)
         {
             return null;
         }
@@ -214,10 +211,9 @@ public class Board {
         int emptyTileRow = -1;
         int emptyTileCol = -1;
         int emptyTile = 0;
-        int[][] currentBoardCopy = cloneBoard();
-        for (int row = 0; row < N; ++row)
+        for (int row = 0; row < n; ++row)
         {
-            for (int col = 0; col < N; ++col)
+            for (int col = 0; col < n; ++col)
             {
                 if (tiles[row][col] == emptyTile)
                 {
@@ -252,10 +248,10 @@ public class Board {
     // a board that is obtained by exchanging any pair of tiles
     public Board twin()
     {
-        int[][] twinTiles = new int[N][N];
-        for (int row = 0; row < N; ++row)
+        int[][] twinTiles = new int[n][n];
+        for (int row = 0; row < n; ++row)
         {
-            for (int col = 0; col < N; ++col)
+            for (int col = 0; col < n; ++col)
             {
                 twinTiles[row][col] = tiles[row][col];
             }
@@ -264,9 +260,9 @@ public class Board {
         int firstPairCol = -1;
         int secondPairRow = -1;
         int secondPairCol = -1;
-        for (int row = 0; row < N; ++row)
+        for (int row = 0; row < n; ++row)
         {
-            for (int col = 0; col < N; ++col)
+            for (int col = 0; col < n; ++col)
             {
                 if (twinTiles[row][col] != 0
                         && firstPairRow == -1

@@ -5,13 +5,18 @@ import edu.princeton.cs.algs4.Queue;
 import edu.princeton.cs.algs4.Stack;
 
 public class Solver {
-    // find a solution to the initial board (using the A* algorithm)
     private boolean solvable;
     private int solveMoves;
     private Queue<Board> solutionChain;
 
+    // find a solution to the initial board (using the A* algorithm)
     public Solver(Board initial)
     {
+        if (initial == null)
+        {
+            throw new IllegalArgumentException(
+                    "Error: Solver: Invalid argument: null");
+        }
         MinPQ<SearchNode> puzzleSolution = new MinPQ<SearchNode>();
         MinPQ<SearchNode> twinSolution = new MinPQ<SearchNode>();
         Board twin = initial.twin();
@@ -110,13 +115,13 @@ public class Solver {
 
         public int compareTo(SearchNode that)
         {
-            final int priority_this = priority + moves;
-            final int priority_that = that.priority + that.moves;
-            if (priority_this < priority_that)
+            final int priorityThis = priority + moves;
+            final int priorityThat = that.priority + that.moves;
+            if (priorityThis < priorityThat)
             {
                 return -1;
             }
-            if (priority_this > priority_that)
+            if (priorityThis > priorityThat)
             {
                 return 1;
             }
