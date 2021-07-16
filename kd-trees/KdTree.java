@@ -14,10 +14,12 @@ public class KdTree {
         private RectHV rect;  // the axis-aligned rectangle corresponding to this node
         private Node lb;      // the left/bottom subtree
         private Node rt;      // the right/top subtree
+        private boolean isVertical;
 
-        Node(Point2D p)
+        Node(Point2D p, boolean isVertical)
         {
             this.p = p;
+            this.isVertical = isVertical;
         }
     }
 
@@ -52,24 +54,28 @@ public class KdTree {
     {
         if (!contains(p))
         {
-            root = insert(root, p);
+            root = insert(root, p, true);
         }
     }
 
-    private Node insert(Node x, Point2D p)
+    private Node insert(Node x, Point2D p, boolean isVertical)
     {
         if (x == null)
         {
-            return new Node(p);
+            return new Node(p, isVertical);
         }
-        int cmp = p.compareTo(x.p);
+        int cmp = comparePoints(x, p, isVertical);
         if (cmp < 0)
         {
-            x.lb = insert(x.lb, p);
+            x.lb = insert(x.lb, p, !isVertical);
         }
         else if (cmp > 0)
         {
-            x.rt = insert(x.rt, p);
+            x.rt = insert(x.rt, p, !isVertical);
+        }
+        else if (!p.equals(x.p))
+        {
+            x.rt = insert(x.rt, p, !isVertical);
         }
         else
         {
@@ -80,28 +86,41 @@ public class KdTree {
 
     private Point2D get(Point2D p)
     {
-        return get(root, p);
+        return get(root, p, true);
     }
 
-    private Point2D get(Node x, Point2D p)
+    private Point2D get(Node x, Point2D p, boolean isVertical)
     {
         if (x == null)
         {
             return null;
         }
-        int cmp = p.compareTo(x.p);
+        int cmp = comparePoints(x, p, isVertical);
         if (cmp < 0)
         {
-            return get(x.lb, p);
+            return get(x.lb, p, !isVertical);
         }
         else if (cmp > 0)
         {
-            return get(x.rt, p);
+            return get(x.rt, p, !isVertical);
+        }
+        else if (!p.equals(x.p))
+        {
+            return get(x.rt, p, !isVertical);
         }
         else
         {
             return p;
         }
+    }
+
+    private int comparePoints(Node x, Point2D p, boolean isVertical)
+    {
+        if (isVertical)
+        {
+            return Point2D.X_ORDER.compare(p, x.p);
+        }
+        return Point2D.Y_ORDER.compare(p, x.p);
     }
 
     // does the kdtree contain point p?
@@ -173,7 +192,7 @@ public class KdTree {
             StdDraw.setPenRadius(0.01);
             kdtree.draw();
 
-            // draw in red the nearest neighbor (using brute-force algorithm)
+            // draw in red the nearest neighbor (using kdtree algorithm)
             StdDraw.setPenRadius(0.03);
             StdDraw.setPenColor(StdDraw.RED);
             //kdtree.nearest(query).draw();
