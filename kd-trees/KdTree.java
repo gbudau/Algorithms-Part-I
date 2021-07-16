@@ -15,11 +15,13 @@ public class KdTree {
         private Node lb;      // the left/bottom subtree
         private Node rt;      // the right/top subtree
         private boolean isVertical;
+        private int size;
 
-        Node(Point2D p, boolean isVertical)
+        Node(Point2D p, boolean isVertical, int size)
         {
             this.p = p;
             this.isVertical = isVertical;
+            this.size = size;
         }
     }
 
@@ -46,7 +48,7 @@ public class KdTree {
         {
             return 0;
         }
-        return 1 + size(x.lb) + size(x.rt);
+        return x.size;
     }
 
     // add the point to the kdtree (if it is not already in the kdtree)
@@ -62,7 +64,7 @@ public class KdTree {
     {
         if (x == null)
         {
-            return new Node(p, isVertical);
+            return new Node(p, isVertical, 1);
         }
         int cmp = comparePoints(x, p, isVertical);
         if (cmp < 0)
@@ -73,6 +75,7 @@ public class KdTree {
         {
             x.rt = insert(x.rt, p, !isVertical);
         }
+        x.size = 1 + size(x.lb) + size(x.rt);
         return x;
     }
 
