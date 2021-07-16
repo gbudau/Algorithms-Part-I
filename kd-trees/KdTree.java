@@ -69,17 +69,9 @@ public class KdTree {
         {
             x.lb = insert(x.lb, p, !isVertical);
         }
-        else if (cmp > 0)
-        {
-            x.rt = insert(x.rt, p, !isVertical);
-        }
-        else if (!p.equals(x.p))
-        {
-            x.rt = insert(x.rt, p, !isVertical);
-        }
         else
         {
-            x.p = p;
+            x.rt = insert(x.rt, p, !isVertical);
         }
         return x;
     }
@@ -100,17 +92,13 @@ public class KdTree {
         {
             return get(x.lb, p, !isVertical);
         }
-        else if (cmp > 0)
+        else if (p.equals(x.p))
         {
-            return get(x.rt, p, !isVertical);
-        }
-        else if (!p.equals(x.p))
-        {
-            return get(x.rt, p, !isVertical);
+            return p;
         }
         else
         {
-            return p;
+            return get(x.rt, p, !isVertical);
         }
     }
 
