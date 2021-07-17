@@ -10,16 +10,19 @@ public class KdTree {
     Node root;
 
     private static class Node {
-        private Point2D p;    // the point
-        private RectHV rect;  // the axis-aligned rectangle corresponding to this node
-        private Node lb;      // the left/bottom subtree
-        private Node rt;      // the right/top subtree
-        private boolean isVertical;
-        private int size;
+        private Point2D p;           // the point
+        private RectHV rect;         // the axis-aligned rectangle corresponding to this node
+        private Node lb;             // the left/bottom subtree
+        private Node rt;             // the right/top subtree
+        private Node prev;           // previous node, null for the root node
+        private boolean isVertical;  // this node splits the plane vertically or horizontally
+        private int size;            // size of tree, includes the size of the subtrees
 
-        Node(Point2D p, boolean isVertical, int size)
+        Node(Node prev, Point2D p, boolean isVertical, int size)
         {
+            this.prev = prev;
             this.p = p;
+            rect = new RectHV(0, 0, 1, 1);
             this.isVertical = isVertical;
             this.size = size;
         }
@@ -56,24 +59,25 @@ public class KdTree {
     {
         if (!contains(p))
         {
-            root = insert(root, p, true);
+            root = insert(root, null, p, true);
         }
     }
 
-    private Node insert(Node x, Point2D p, boolean isVertical)
+    private Node insert(Node x, Node prev, Point2D p, boolean isVertical)
     {
         if (x == null)
         {
-            return new Node(p, isVertical, 1);
+            return new Node(prev, p, isVertical, 1);
         }
+
         int cmp = comparePoints(x, p, isVertical);
         if (cmp < 0)
         {
-            x.lb = insert(x.lb, p, !isVertical);
+            x.lb = insert(x.lb, x, p, !isVertical);
         }
         else
         {
-            x.rt = insert(x.rt, p, !isVertical);
+            x.rt = insert(x.rt, x, p, !isVertical);
         }
         x.size = 1 + size(x.lb) + size(x.rt);
         return x;
@@ -90,14 +94,15 @@ public class KdTree {
         {
             return null;
         }
+
         int cmp = comparePoints(x, p, isVertical);
-        if (cmp < 0)
-        {
-            return get(x.lb, p, !isVertical);
-        }
-        else if (p.equals(x.p))
+        if (p.equals(x.p))
         {
             return p;
+        }
+        else if (cmp < 0)
+        {
+            return get(x.lb, p, !isVertical);
         }
         else
         {
