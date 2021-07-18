@@ -230,11 +230,12 @@ public class KdTree {
             return champion;
         }
         final double champDist = champion.distanceSquaredTo(query);
-        final double currentDist = x.p.distanceSquaredTo(query);
-        if (champDist <= currentDist)
+        final double rectDistance = x.rect.distanceSquaredTo(query);
+        if (champDist <= rectDistance)
         {
             return champion;
         }
+        final double currentDist = x.p.distanceSquaredTo(query);
         if (currentDist < champDist)
         {
             champion = x.p;
