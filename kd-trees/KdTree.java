@@ -18,11 +18,38 @@ public class KdTree {
         private boolean isVertical;  // this node splits the plane vertically or horizontally
         private int size;            // size of tree, includes the size of the subtrees
 
-        Node(Node prev, Point2D p, boolean isVertical, int size)
+        Node(Node prev, boolean isLeft, Point2D p, boolean isVertical, int size)
         {
             this.prev = prev;
             this.p = p;
-            rect = new RectHV(0, 0, 1, 1);
+            if (prev == null)
+            {
+                rect = new RectHV(0, 0, 1, 1);
+            }
+            else if (isLeft && !isVertical)
+            {
+                rect = new RectHV(
+                        prev.rect.xmin(), prev.rect.ymin(),
+                        prev.p.x(), prev.rect.ymax());
+            }
+            else if (!isLeft && !isVertical)
+            {
+                rect = new RectHV(
+                        prev.p.x(), prev.rect.ymin(),
+                        prev.rect.xmax(), prev.rect.ymax());
+            }
+            else if (isLeft && isVertical)
+            {
+                rect = new RectHV(
+                        prev.rect.xmin(), prev.rect.ymin(),
+                        prev.rect.xmax(), prev.p.y());
+            }
+            else if (!isLeft && isVertical)
+            {
+                rect = new RectHV(
+                        prev.rect.xmin(), prev.p.y(),
+                        prev.rect.xmax(), prev.rect.ymax());
+            }
             this.isVertical = isVertical;
             this.size = size;
         }
@@ -59,25 +86,25 @@ public class KdTree {
     {
         if (!contains(p))
         {
-            root = insert(root, null, p, true);
+            root = insert(root, null, true, p, true);
         }
     }
 
-    private Node insert(Node x, Node prev, Point2D p, boolean isVertical)
+    private Node insert(Node x, Node prev, boolean isLeft, Point2D p, boolean isVertical)
     {
         if (x == null)
         {
-            return new Node(prev, p, isVertical, 1);
+            return new Node(prev, isLeft, p, isVertical, 1);
         }
 
         int cmp = comparePoints(x, p, isVertical);
         if (cmp < 0)
         {
-            x.lb = insert(x.lb, x, p, !isVertical);
+            x.lb = insert(x.lb, x, true, p, !isVertical);
         }
         else
         {
-            x.rt = insert(x.rt, x, p, !isVertical);
+            x.rt = insert(x.rt, x, false, p, !isVertical);
         }
         x.size = 1 + size(x.lb) + size(x.rt);
         return x;
@@ -137,7 +164,22 @@ public class KdTree {
         {
             return;
         }
+        StdDraw.setPenRadius(0.02);
         x.p.draw();
+        StdDraw.setPenRadius(0.005);
+        if (x.isVertical)
+        {
+            StdDraw.setPenColor(StdDraw.RED);
+            StdDraw.line(x.p.x(), x.rect.ymin(), x.p.x(), x.rect.ymax());
+        }
+        else
+        {
+            StdDraw.setPenColor(StdDraw.BLUE);
+            StdDraw.line(x.rect.xmin(), x.p.y(), x.rect.xmax(), x.p.y());
+        }
+        StdOut.println("Point: " + x.p.toString());
+        StdOut.println("Rectangle: " + x.rect.toString());
+        StdOut.println();
         draw(x.lb);
         draw(x.rt);
     }
@@ -189,13 +231,14 @@ public class KdTree {
             kdtree.draw();
 
             // draw in red the nearest neighbor (using kdtree algorithm)
-            StdDraw.setPenRadius(0.03);
-            StdDraw.setPenColor(StdDraw.RED);
+            //StdDraw.setPenRadius(0.03);
+            //StdDraw.setPenColor(StdDraw.RED);
             //kdtree.nearest(query).draw();
-            StdDraw.setPenRadius(0.02);
+            //StdDraw.setPenRadius(0.02);
 
             StdDraw.show();
             StdDraw.pause(40);
+            return;
         }
     }
 }
