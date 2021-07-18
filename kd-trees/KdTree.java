@@ -225,13 +225,16 @@ public class KdTree {
 
     private Point2D nearest(Node x, boolean isVertical, Point2D query, Point2D champion)
     {
-        if (x == null ||
-                champion.distanceSquaredTo(query) <= x.rect.distanceSquaredTo(query))
+        if (x == null)
         {
             return champion;
         }
         final double champDist = champion.distanceSquaredTo(query);
         final double currentDist = x.p.distanceSquaredTo(query);
+        if (champDist <= currentDist)
+        {
+            return champion;
+        }
         if (currentDist < champDist)
         {
             champion = x.p;
