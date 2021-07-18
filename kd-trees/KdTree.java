@@ -184,12 +184,32 @@ public class KdTree {
         draw(x.rt);
     }
 
-    /*
     // all points that are inside the rectangle (or on the boundary)
     public Iterable<Point2D> range(RectHV rect)
     {
+        Queue<Point2D> queue = new Queue<Point2D>();
+        range(root, rect, queue);
+        return queue;
     }
 
+    private void range(Node x, RectHV rect, Queue<Point2D> queue)
+    {
+        if (x == null)
+        {
+            return ;
+        }
+        if (x.rect.intersects(rect))
+        {
+            if (rect.contains(x.p))
+            {
+                queue.enqueue(x.p);
+            }
+            range(x.lb, rect, queue);
+            range(x.rt, rect, queue);
+        }
+    }
+
+    /*
     // a nearest neighbor in the kdtree to point p;
     // null if the kdtree is empty
     public Point2D nearest(Point2D p)
