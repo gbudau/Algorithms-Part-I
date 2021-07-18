@@ -15,7 +15,6 @@ public class KdTree {
         private Node lb;             // the left/bottom subtree
         private Node rt;             // the right/top subtree
         private Node prev;           // previous node, null for the root node
-        private boolean isVertical;  // this node splits the plane vertically or horizontally
         private int size;            // size of tree, includes the size of the subtrees
 
         Node(Node prev, boolean isLeft, Point2D p, boolean isVertical, int size)
@@ -50,7 +49,6 @@ public class KdTree {
                         prev.rect.xmin(), prev.p.y(),
                         prev.rect.xmax(), prev.rect.ymax());
             }
-            this.isVertical = isVertical;
             this.size = size;
         }
     }
@@ -155,10 +153,10 @@ public class KdTree {
     // draw all points to standard draw
     public void draw()
     {
-        draw(root);
+        draw(root, true);
     }
 
-    private void draw(Node x)
+    private void draw(Node x, boolean isVertical)
     {
         if (x == null)
         {
@@ -167,7 +165,7 @@ public class KdTree {
         StdDraw.setPenRadius(0.02);
         x.p.draw();
         StdDraw.setPenRadius(0.005);
-        if (x.isVertical)
+        if (isVertical)
         {
             StdDraw.setPenColor(StdDraw.RED);
             StdDraw.line(x.p.x(), x.rect.ymin(), x.p.x(), x.rect.ymax());
@@ -177,11 +175,11 @@ public class KdTree {
             StdDraw.setPenColor(StdDraw.BLUE);
             StdDraw.line(x.rect.xmin(), x.p.y(), x.rect.xmax(), x.p.y());
         }
-        StdOut.println("Point: " + x.p.toString());
-        StdOut.println("Rectangle: " + x.rect.toString());
-        StdOut.println();
-        draw(x.lb);
-        draw(x.rt);
+        //StdOut.println("Point: " + x.p.toString());
+        //StdOut.println("Rectangle: " + x.rect.toString());
+        //StdOut.println();
+        draw(x.lb, !isVertical);
+        draw(x.rt, !isVertical);
     }
 
     // all points that are inside the rectangle (or on the boundary)
@@ -209,13 +207,43 @@ public class KdTree {
         }
     }
 
-    /*
     // a nearest neighbor in the kdtree to point p;
     // null if the kdtree is empty
     public Point2D nearest(Point2D p)
     {
+        if (size() == 0)
+        {
+            return null;
+        }
+        return nearest(root, true, p, root.p);
     }
-    */
+
+    private Point2D nearest(Node x, boolean isVertical, Point2D query, Point2D champion)
+    {
+        if (x == null ||
+                champion.distanceSquaredTo(query) <= x.rect.distanceSquaredTo(query))
+        {
+            return champion;
+        }
+        double champDist = champion.distanceSquaredTo(query);
+        double currentDist = x.p.distanceSquaredTo(query);
+        if (currentDist < champDist)
+        {
+            champion = x.p;
+        }
+        int cmp = comparePoints(x, query, isVertical);
+        if (cmp < 0)
+        {
+            champion = nearest(x.lb, !isVertical, query, champion);
+            champion = nearest(x.rt, !isVertical, query, champion);
+        }
+        else
+        {
+            champion = nearest(x.rt, !isVertical, query, champion);
+            champion = nearest(x.lb, !isVertical, query, champion);
+        }
+        return champion;
+    }
 
     // unit testing of the methods
     public static void main(String[] args)
@@ -251,10 +279,10 @@ public class KdTree {
             kdtree.draw();
 
             // draw in red the nearest neighbor (using kdtree algorithm)
-            //StdDraw.setPenRadius(0.03);
-            //StdDraw.setPenColor(StdDraw.RED);
-            //kdtree.nearest(query).draw();
-            //StdDraw.setPenRadius(0.02);
+            StdDraw.setPenRadius(0.03);
+            StdDraw.setPenColor(StdDraw.RED);
+            kdtree.nearest(query).draw();
+            StdDraw.setPenRadius(0.02);
 
             StdDraw.show();
             StdDraw.pause(40);
