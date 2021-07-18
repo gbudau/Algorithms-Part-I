@@ -1,4 +1,3 @@
-import edu.princeton.cs.algs4.SET;
 import edu.princeton.cs.algs4.Point2D;
 import edu.princeton.cs.algs4.RectHV;
 import edu.princeton.cs.algs4.Queue;
@@ -7,7 +6,7 @@ import edu.princeton.cs.algs4.StdDraw;
 import edu.princeton.cs.algs4.In;
 
 public class KdTree {
-    Node root;
+    private Node root;
 
     private static class Node {
         private final Point2D p;     // the point
@@ -163,30 +162,18 @@ public class KdTree {
     // draw all points to standard draw
     public void draw()
     {
-        draw(root, true);
+        draw(root);
     }
 
-    private void draw(Node x, boolean isVertical)
+    private void draw(Node x)
     {
         if (x == null)
         {
             return;
         }
-        StdDraw.setPenRadius(0.02);
         x.p.draw();
-        StdDraw.setPenRadius(0.005);
-        if (isVertical)
-        {
-            StdDraw.setPenColor(StdDraw.RED);
-            StdDraw.line(x.p.x(), x.rect.ymin(), x.p.x(), x.rect.ymax());
-        }
-        else
-        {
-            StdDraw.setPenColor(StdDraw.BLUE);
-            StdDraw.line(x.rect.xmin(), x.p.y(), x.rect.xmax(), x.p.y());
-        }
-        draw(x.lb, !isVertical);
-        draw(x.rt, !isVertical);
+        draw(x.lb);
+        draw(x.rt);
     }
 
     // all points that are inside the rectangle (or on the boundary)
@@ -207,7 +194,7 @@ public class KdTree {
     {
         if (x == null)
         {
-            return ;
+            return;
         }
         if (x.rect.intersects(rect))
         {
@@ -304,7 +291,6 @@ public class KdTree {
 
             StdDraw.show();
             StdDraw.pause(40);
-            return;
         }
     }
 }
