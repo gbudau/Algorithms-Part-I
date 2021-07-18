@@ -10,11 +10,11 @@ public class KdTree {
     Node root;
 
     private static class Node {
-        private Point2D p;           // the point
-        private RectHV rect;         // the axis-aligned rectangle corresponding to this node
+        private final Point2D p;     // the point
+        private final RectHV rect;   // the axis-aligned rectangle corresponding to this node
         private Node lb;             // the left/bottom subtree
         private Node rt;             // the right/top subtree
-        private Node prev;           // previous node, null for the root node
+        private final Node prev;     // previous node, null for the root node
         private int size;            // size of tree, includes the size of the subtrees
 
         Node(Node prev, boolean isLeft, Point2D p, boolean isVertical, int size)
@@ -43,7 +43,7 @@ public class KdTree {
                         prev.rect.xmin(), prev.rect.ymin(),
                         prev.rect.xmax(), prev.p.y());
             }
-            else if (!isLeft && isVertical)
+            else
             {
                 rect = new RectHV(
                         prev.rect.xmin(), prev.p.y(),
@@ -82,6 +82,11 @@ public class KdTree {
     // add the point to the kdtree (if it is not already in the kdtree)
     public void insert(Point2D p)
     {
+        if (p == null)
+        {
+            throw new IllegalArgumentException(
+                    "insert: invalid argument: null");
+        }
         if (!contains(p))
         {
             root = insert(root, null, true, p, true);
@@ -95,7 +100,7 @@ public class KdTree {
             return new Node(prev, isLeft, p, isVertical, 1);
         }
 
-        int cmp = comparePoints(x, p, isVertical);
+        final int cmp = comparePoints(x, p, isVertical);
         if (cmp < 0)
         {
             x.lb = insert(x.lb, x, true, p, !isVertical);
@@ -120,7 +125,7 @@ public class KdTree {
             return null;
         }
 
-        int cmp = comparePoints(x, p, isVertical);
+        final int cmp = comparePoints(x, p, isVertical);
         if (p.equals(x.p))
         {
             return p;
@@ -147,6 +152,11 @@ public class KdTree {
     // does the kdtree contain point p?
     public boolean contains(Point2D p)
     {
+        if (p == null)
+        {
+            throw new IllegalArgumentException(
+                    "contains: invalid argument: null");
+        }
         return get(p) != null;
     }
 
@@ -175,9 +185,6 @@ public class KdTree {
             StdDraw.setPenColor(StdDraw.BLUE);
             StdDraw.line(x.rect.xmin(), x.p.y(), x.rect.xmax(), x.p.y());
         }
-        //StdOut.println("Point: " + x.p.toString());
-        //StdOut.println("Rectangle: " + x.rect.toString());
-        //StdOut.println();
         draw(x.lb, !isVertical);
         draw(x.rt, !isVertical);
     }
@@ -185,6 +192,12 @@ public class KdTree {
     // all points that are inside the rectangle (or on the boundary)
     public Iterable<Point2D> range(RectHV rect)
     {
+        if (rect == null)
+        {
+            throw new IllegalArgumentException(
+                    "range: invalid argument: null");
+        }
+
         Queue<Point2D> queue = new Queue<Point2D>();
         range(root, rect, queue);
         return queue;
@@ -211,6 +224,11 @@ public class KdTree {
     // null if the kdtree is empty
     public Point2D nearest(Point2D p)
     {
+        if (p == null)
+        {
+            throw new IllegalArgumentException(
+                    "nearest: invalid argument: null");
+        }
         if (size() == 0)
         {
             return null;
@@ -225,8 +243,8 @@ public class KdTree {
         {
             return champion;
         }
-        double champDist = champion.distanceSquaredTo(query);
-        double currentDist = x.p.distanceSquaredTo(query);
+        final double champDist = champion.distanceSquaredTo(query);
+        final double currentDist = x.p.distanceSquaredTo(query);
         if (currentDist < champDist)
         {
             champion = x.p;
